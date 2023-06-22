@@ -58,11 +58,9 @@ namespace Disconnected_Environment
             
 
             koneksi.Open();
-            string str = "select nama_mahasiswa from dbo.Mahasiswa where not EXISTS (select id_status from dbo.Status_mahasiswa where Status_mahasiswa = @NIM)";
+            string str = "select nama_mahasiswa from dbo.Mahasiswa where not EXISTS (select id_status from dbo.Status_mahasiswa where dbo.Status_mahasiswa.nim = dbo.Status_mahasiswa.nim)";
 
             SqlCommand cmd = new SqlCommand(str, koneksi);
-            cmd.CommandType = CommandType.Text;
-            cmd.Parameters.Add(new SqlParameter("@NIM", Mahasiswa));
             SqlDataAdapter da = new SqlDataAdapter(str, koneksi);
             DataSet ds = new DataSet();
             da.Fill(ds);
@@ -97,15 +95,15 @@ namespace Disconnected_Environment
         {
             koneksi.Open();
             string nim = "";
-            string strs = "select NIM from dbo.Mahasiswa where nama_mahasiswa = @nm";
+            string strs = "select nim from dbo.Mahasiswa where nama_mahasiswa = @nm";
             SqlCommand cm = new SqlCommand(strs, koneksi);
             cm.CommandType = CommandType.Text;
             cm.Parameters.Add(new SqlParameter("@nm", cbxNama.Text));
             SqlDataReader dr = cm.ExecuteReader();
-            while (dr.Read()) ;
-            {
-                nim = dr["NIM"].ToString();
-            }
+                if (dr.Read())
+                {
+                    nim = dr["NIM"].ToString();
+                }
             dr.Close();
             koneksi.Close();
 
@@ -141,7 +139,7 @@ namespace Disconnected_Environment
             string kodeStatus = "";
             koneksi.Open();
 
-            string str = "select count from dbo.Status_mahasiswa";
+            string str = "select count(*) from dbo.Status_mahasiswa ";
             SqlCommand cm = new SqlCommand(str, koneksi);
             count = (int)cm.ExecuteScalar();
 
